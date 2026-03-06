@@ -1,4 +1,9 @@
 // --- หน้า dashboard.html (My Meetings) ---
+const { data } = await supabase.auth.getSession();
+if (!data.session) {
+    window.location.href = "login.html"; // ถ้าไม่มี session ให้ไล่กลับไปหน้า login
+}
+
 async function loadMyMeetings() {
     try {
         const { data: rooms, error } = await supabase

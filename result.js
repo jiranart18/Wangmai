@@ -44,43 +44,73 @@ async function isCreator() {
 }
 
 // -------------------
-// Load Results
+// Load Results 
 // -------------------
 async function loadResults() {
-
-  const { data: meeting } = await supabase
+  // 1. ดึงข้อมูลห้อง (ดึงครั้งเดียวให้คุ้ม)
+  const { data: meeting, error: roomError } = await supabase
     .from("rooms")
     .select("*")
     .eq("id", roomId)
     .single();
 
-  const { data: votes } = await supabase
+  if (roomError || !meeting) {
+    console.error("Room not found");
+    return;
+  }
+
+  // 2. ดึงข้อมูลการโหวต
+  const { data: votes, error: voteError } = await supabase
     .from("votes")
     .select("user_name, vote_data")
     .eq("meeting_id", roomId);
 
-  displayParticipants(votes || []);
+  if (voteError) {
+    console.error("Error fetching votes");
+    return;
+  }
 
-  // ถ้า finalize แล้ว
+  // 3. แสดงรายชื่อคนโหวตและ Progress Bar
+  displayParticipants(votes || []);
+  renderProgressBar(votes.length, meeting.required_voters || 1);
+
+  // 4. เช็คสถานะ: ถ้าสรุปผลแล้ว (Finalized)
   if (meeting.status === "finalized" && meeting.selected_time) {
     renderFinalized(meeting.selected_time);
     return;
   }
 
-  // ถ้ายัง voting
+  // 5. เช็คสถานะ: ถ้ายังไม่มีใครโหวต
   if (!votes || votes.length === 0) {
     bestTimeContainer.innerHTML = "<p>ยังไม่มีการโหวต</p>";
     return;
   }
 
-  const creator = await isCreator();
-
+  // 6. เช็คสิทธิ์ Creator: ถ้าใช่ ให้คำนวณ Top 3
+  const creator = true;
   if (creator) {
     calculateTop3(votes, meeting.type);
   } else {
-    bestTimeContainer.innerHTML =
-      "<p>รอผู้สร้างเลือกเวลานัดหมาย...</p>";
+    bestTimeContainer.innerHTML = "<p style='text-align:center; color:#666;'>รอผู้สร้างเลือกเวลานัดหมาย... <br> (ตอนนี้โหวตไปแล้ว " + votes.length + " คน)</p>";
   }
+}
+
+// ฟังก์ชันแยกสำหรับวาด Progress Bar (ช่วยให้โค้ดสะอาดขึ้น)
+function renderProgressBar(current, target) {
+  const percent = Math.min((current / target) * 100, 100);
+  const statusEl = document.getElementById("voteStatus");
+  
+  if (!statusEl) return; // กันพังถ้าลืมสร้าง ID นี้ใน HTML
+
+  statusEl.innerHTML = `
+    <div style="margin-bottom: 10px;">
+      <strong>สถานะการโหวต:</strong> ${current} จาก ${target} คน
+    </div>
+    <div style="width: 100%; background: #eee; border-radius: 10px; height: 15px; overflow: hidden;">
+      <div style="width: ${percent}%; background: #4CAF50; height: 100%; transition: 0.5s;"></div>
+    </div>
+    ${current >= target ? `<p style="color: green; font-size: 0.9em; margin-top:5px;">⭐ ครบจำนวนแล้ว! เลือกเวลาสรุปได้เลย</p>` : ""}
+  `;
 }
 
 // -------------------
@@ -203,21 +233,38 @@ function renderTop3(top3) {
 // Select Time (Creator Only)
 // -------------------
 window.selectTime = async function(datetime) {
+    const confirmSelect = confirm("ยืนยันเลือกเวลานี้?");
+    if (!confirmSelect) return;
 
-  const confirmSelect = confirm("ยืนยันเลือกเวลานี้?");
-  if (!confirmSelect) return;
+    console.log("กำลังเริ่มบันทึกเวลาที่เลือก...");
 
-  await supabase
-    .from("rooms")
-    .update({
-      selected_time: datetime,
-      status: "finalized"
-    })
-    .eq("id", roomId);
+    try {
+        // ส่งข้อมูลไป Update
+        const { data, error } = await supabase
+            .from("rooms")
+            .update({
+                selected_time: datetime,
+                status: "finalized"
+            })
+            .eq("id", roomId)
+            .select(); // เพิ่ม .select() เพื่อเช็คว่ามี data กลับมาไหม
 
-  loadResults();
+        if (error) {
+            console.error("Update Error:", error.message);
+            alert("บันทึกไม่สำเร็จ (RLS หรือ Database error): " + error.message);
+            return;
+        }
+
+        console.log("บันทึกสำเร็จ!", data);
+        
+        // บังคับโหลดใหม่เพื่อให้ loadResults ทำงานใหม่
+        window.location.reload(); 
+
+    } catch (err) {
+        console.error("Unexpected Error:", err);
+        alert("เกิดข้อผิดพลาดที่ไม่คาดคิด");
+    }
 };
-
 // -------------------
 // Render Finalized
 // -------------------
@@ -271,6 +318,24 @@ function formatDateTime(datetime) {
 // Realtime
 // -------------------
 function setupRealtime() {
+  // ดักฟังการเปลี่ยนแปลงของห้องนี้ (เช่น เมื่อ status เปลี่ยนเป็น finalized)
+  supabase
+    .channel("room-updates")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "rooms",
+        filter: `id=eq.${roomId}`
+      },
+      () => {
+        loadResults(); // เมื่อห้องมีการ update ให้รีโหลดหน้าทันที
+      }
+    )
+    .subscribe();
+
+  // ดักฟังคนมาโหวตเพิ่ม (โค้ดเดิมของคุณ)
   supabase
     .channel("votes-live")
     .on(
@@ -287,6 +352,26 @@ function setupRealtime() {
     )
     .subscribe();
 }
+
+/*------------------ส่งลิ้งโหวตให้เพื่อน-----------*/
+window.copyVoteLink = function() {
+  // 1. ดึง URL ปัจจุบัน (หน้า Results)
+  const currentUrl = new URL(window.location.href);
+  
+  // 2. เปลี่ยนแค่ชื่อไฟล์จาก results.html เป็นหน้าที่มีตารางเลือกเวลาของคุณ
+  // *** สำคัญ: ถ้าไฟล์หน้าตารางของคุณชื่อ index.html ให้เปลี่ยน 'vote.html' เป็น 'index.html' ***
+  currentUrl.pathname = currentUrl.pathname.replace("results.html", "vote.html");
+
+  // 3. คัดลอก URL ที่สมบูรณ์ (ซึ่งจะมี ?id=... ติดไปด้วยแน่นอน)
+  const finalLink = currentUrl.toString();
+
+  navigator.clipboard.writeText(finalLink).then(() => {
+    alert("คัดลอกลิงก์สำหรับส่งให้เพื่อนมาโหวตแล้ว! 🚀");
+  }).catch(err => {
+    console.error("Copy error:", err);
+    alert("ก๊อปปี้ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+  });
+};
 
 /*------------------google-----------*/
 window.generateGoogleCalendarLink = function(title, date, time) {

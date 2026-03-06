@@ -18,24 +18,29 @@ typeButtons.forEach(btn => {
 const btnContinue = document.getElementById('btnContinue');
 
 btnContinue.addEventListener('click', async () => {
-    const name = document.getElementById('meetingName').value;
+    // 1. ดึงค่าจาก Input ให้ครบ
+    const name = document.getElementById('meetingName').value.trim();
     const start = document.getElementById('startDate').value;
     const end = document.getElementById('endDate').value;
+    const requiredVoters = document.getElementById("requiredVoters").value;
 
-    // Error Handling: ตรวจสอบข้อมูลก่อนส่ง
+    // 2. Error Handling
     if (!name || !start || !end) {
         alert("Please fill in all fields!");
         return;
     }
 
+    // 3. รวมข้อมูลที่จะส่ง (เตรียม Object เดียวให้เรียบร้อย)
     const meetingData = {
-        title: name,
+        title: name,              // ใช้ name ที่ดึงมาด้านบน
         type: selectedType,
         dates: { start: start, end: end },
+        required_voters: parseInt(requiredVoters) || 1, // เพิ่มตัวนี้เข้าไป
+        status: "open"
     };
 
     try {
-        // ส่งข้อมูลเข้าตาราง 'rooms' ใน Supabase
+        // 4. ส่งข้อมูลเข้าตาราง 'rooms' (ส่งครั้งเดียวพอครับ)
         const { data, error } = await supabase
             .from('rooms')
             .insert([meetingData])
@@ -43,13 +48,13 @@ btnContinue.addEventListener('click', async () => {
 
         if (error) throw error;
 
-        // เมื่อบันทึกสำเร็จ ให้ย้ายไปหน้า Dashboard พร้อมรหัสห้อง
+        // 5. เมื่อบันทึกสำเร็จ ย้ายไปหน้าโหวต
         if (data && data.length > 0) {
-        window.location.href = `vote.html?id=${data[0].id}`;
+            window.location.href = `vote.html?id=${data[0].id}`;
         }
     } catch (err) {
         console.error("Error creating meeting:", err.message);
-        alert("Failed to create meeting. Please try again.");
+        alert("Failed to create meeting: " + err.message);
     }
 });
 

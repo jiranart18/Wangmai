@@ -131,20 +131,7 @@ function attachVotingLogic() {
 // รันฟังก์ชันหลัก
 initVotingPage();
 
-function copyInviteLink() {
-  // ดึง URL ปัจจุบันของหน้านี้ (ที่มี ?id=... ติดมาด้วย)
-  const currentUrl = window.location.href;
 
-  // ใช้คำสั่งก๊อปปี้ลง Clipboard
-  navigator.clipboard
-    .writeText(currentUrl)
-    .then(() => {
-      alert("ก๊อปปี้ลิงก์เชิญเพื่อนแล้ว! ส่งให้เพื่อนโหวตได้เลย");
-    })
-    .catch(err => {
-      console.error("Error in copying: ", err);
-    });
-}
 
 // ผูกฟังก์ชันกับปุ่ม (ถ้าคุณมีปุ่ม Share ใน HTML)
 const btnShare = document.getElementById("btnShare");

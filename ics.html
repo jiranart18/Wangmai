@@ -2,11 +2,13 @@
 <html>
 <head>
   <title>Download Calendar</title>
-  <script src="ics.deps.min.js"></script>
-  <script src="ics.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/file-saver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/nwcell/ics.js/ics.deps.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/nwcell/ics.js/ics.min.js"></script>
+  
   <script type="module" src="ics-page.js"></script>
 </head>
 <body>
-  <p>กำลังสร้างไฟล์ปฏิทิน...</p>
+  <p id="status">กำลังสร้างไฟล์ปฏิทินสำหรับ Apple/Outlook...</p>
 </body>
 </html>
