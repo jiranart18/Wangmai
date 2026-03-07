@@ -3,9 +3,9 @@ import { supabase } from './supabase-config.js';
 // เช็คว่าล็อกอินอยู่แล้วไหม
 const { data } = await supabase.auth.getSession();
 
-if (data.session) {
+/*if (data.session) {
   window.location.href = "dashboard.html";
-}
+}*/
 
 // --------------------
 // Login

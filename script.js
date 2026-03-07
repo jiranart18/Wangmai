@@ -207,3 +207,4 @@ const btnSubmit = document.getElementById("btnSubmit"); // ตรวจสอบ
 if (btnSubmit) {
   btnSubmit.onclick = submitAvailability;
 }
+

@@ -73,19 +73,20 @@ button {
   width: 100%;
   padding: 14px;
   margin-top: 24px;
-  font-size: 16px;
+  background-color: transparent;
+  color: #6B705C;
+  border: 2px solid #6B705C;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: bold;
-  background: #6B705C;
-  color: white;
-  border: none;
-  border-radius: 12px;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #474405;
-  transform: translateY(-2px);
+  background-color: #6B705C;
+  color: white;
+  transform: scale(1.05);
 }
 
 
@@ -167,14 +168,21 @@ button:hover {
 
 /* Submit Button */
 .btn-primary {
-  background: #6B705C;
+  width: 100%;
   padding: 14px;
-  border-radius: 12px;
+  margin-top: 24px;
+  background-color: transparent;
+  color: #6B705C;
+  border: 2px solid #6B705C;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
   transition: 0.2s;
 }
 
 .btn-primary:hover {
-  background: #474405;
-  transform: translateY(-2px);
+  background-color: #6B705C;
+  color: white;
+  transform: scale(1.05);
 }

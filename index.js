@@ -18,6 +18,7 @@ typeButtons.forEach(btn => {
 const btnContinue = document.getElementById('btnContinue');
 
 btnContinue.addEventListener('click', async () => {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     // 1. ดึงค่าจาก Input ให้ครบ
     const name = document.getElementById('meetingName').value.trim();
     const start = document.getElementById('startDate').value;
@@ -35,8 +36,9 @@ btnContinue.addEventListener('click', async () => {
         title: name,              // ใช้ name ที่ดึงมาด้านบน
         type: selectedType,
         dates: { start: start, end: end },
-        required_voters: parseInt(requiredVoters) || 1, // เพิ่มตัวนี้เข้าไป
-        status: "open"
+        required_voters: parseInt(requiredVoters) || 1,
+        status: "open",
+        creator_id: user.id
     };
 
     try {
@@ -65,3 +67,27 @@ const formattedDate = today.toISOString().split("T")[0];
 
 document.getElementById("startDate").value = formattedDate;
 document.getElementById("endDate").value = formattedDate;
+
+
+//6.
+async function saveRoomToDatabase() {
+    // 1. ดึง ID ของคนที่กำลังล็อกอินอยู่ตอนนี้
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        alert("กรุณาล็อกอินก่อนสร้างห้อง!");
+        return;
+    }
+
+    // 2. ส่งข้อมูลไปเก็บ พร้อมระบุว่าใครเป็นคนสร้าง (creator_id)
+    const { error } = await supabase
+        .from('rooms')
+        .insert([{
+        
+            meeting_name: roomName, 
+            start_date: startDate, 
+            end_date: endDate,
+            creator_id: user.id // <--- ต้องส่งบรรทัดนี้ไปด้วยเสมอ!
+        
+        }]);
+}

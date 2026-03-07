@@ -15,24 +15,38 @@
 
         <div class="header">
             <h1>My Meetings</h1>
-            <button class="create-btn"
-                onclick="window.location.href='index.html'">
-                + Create New Meeting
-            </button>
+                <button class="create-btn" onclick="window.location.href='index.html'">
+                    + Create New Meeting
+                </button>
+                <button id="logoutBtn" class="btn-logout">log out</button>
+
         </div>
 
         <div class="stats-card">
             <p>Active Meetings</p>
-            <h2 id="activeCount">0</h2>
+            <h2 id="activeCount"></h2>
         </div>
 
-        <div class="meetings" id="meetingsContainer">
-            <div class="empty-state">
+        <div id="meetingsContainer">
+             <div class="empty-state">
                 <p>Loading your meetings...</p>
             </div>
         </div>
+        
+        <section class="meeting-section">
+            <h2 class="section-title"> รอสรุปผล / กำลังโหวต</h2>
+            <div id="activeMeetings" class="meeting-grid">
+                </div>
+        </section>
+        
+        <div class="spacer"></div> <section class="meeting-section">
+            <h2 class="section-title"> โหวตเสร็จสิ้นแล้ว</h2>
+            <div id="completedMeetings" class="meeting-grid">
+                </div>
+        </section>
 
     </div>
 
 </body>
 </html>
+
