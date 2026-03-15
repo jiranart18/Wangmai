@@ -431,6 +431,7 @@ window.copyShareMessage = async function(datetime) {
     `${window.location.origin}${basePath}/ics.html?id=${roomId}`;
     
 
+
   const message =
   `นัดหมาย
 
