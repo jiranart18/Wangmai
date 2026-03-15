@@ -426,9 +426,15 @@ window.copyShareMessage = async function(datetime) {
       time
     );
   
-  const currentUrl = window.location.href;
-  const icsLink = currentUrl.replace(/\/[^\/]*$/, '/ics.html') + `?id=${roomId}`;
+  // ในฟังก์ชัน window.copyShareMessage
+  const currentUrl = new URL(window.location.href);
+  const pathParts = currentUrl.pathname.split('/');
   
+  // ลบชื่อไฟล์ปัจจุบันออก (เช่น results.html) แล้วแทนที่ด้วย ics.html
+  pathParts[pathParts.length - 1] = 'ics.html';
+  
+  // ประกอบร่างใหม่โดยอ้างอิงจาก Origin เดิม
+  const icsLink = `${currentUrl.origin}${pathParts.join('/')}?id=${roomId}`;
   const message =
   `นัดหมาย
 
