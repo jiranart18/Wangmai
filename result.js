@@ -425,9 +425,10 @@ window.copyShareMessage = async function(datetime) {
       date,
       time
     );
-
+  const projectPath = window.location.pathname.split('/')[1];
   const icsLink =
-    `${window.location.origin}/ics.html?id=${roomId}`;
+    `${window.location.origin}/${projectPath}/ics.html?id=${roomId}`;
+    
 
   const message =
   `นัดหมาย
