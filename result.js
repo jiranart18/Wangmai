@@ -426,7 +426,7 @@ window.copyShareMessage = async function(datetime) {
       time
     );
   const currentPath = window.location.pathname;
-  const basePath = fullPath.substring(0, fullPath.lastIndexOf('/'));
+  const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
   const icsLink =
     `${window.location.origin}${basePath}/ics.html?id=${roomId}`;
     
