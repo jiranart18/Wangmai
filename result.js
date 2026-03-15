@@ -426,10 +426,10 @@ window.copyShareMessage = async function(datetime) {
       time
     );
 
-const currentUrl = new URL(window.location.href);
-const icsUrl = new URL(currentUrl.href); 
-icsUrl.pathname = currentUrl.pathname.substring(0, currentUrl.pathname.lastIndexOf('/')) + '/ics.html';
-const icsLink = `${icsUrl.href}?id=${roomId}`;
+let currentUrl = window.location.href;
+currentUrl = currentUrl.split('?')[0];
+let basePath = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+const icsLink = `${basePath}/ics.html?id=${roomId}`;
   
   const message =
   `นัดหมาย
