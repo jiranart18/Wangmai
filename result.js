@@ -78,8 +78,8 @@ async function loadResults() {
 
   // 3. แสดงรายชื่อคนโหวตและ Progress Bar
   displayParticipants(votes || []);
-  renderProgressBar(votes.length, meeting.required_voters || 1);
-
+  renderProgressBar(votes.length, meeting.required_voters || 1, meeting.status);
+  
   // 4. เช็คสถานะ: ถ้าสรุปผลแล้ว (Finalized)
   if (meeting.status === "finalized" && meeting.selected_time) {
     renderFinalized(meeting.selected_time);
@@ -111,21 +111,31 @@ async function loadResults() {
 }
 
 // ฟังก์ชันแยกสำหรับวาด Progress Bar (ช่วยให้โค้ดสะอาดขึ้น)
-function renderProgressBar(current, target) {
+function renderProgressBar(current, target, meetingStatus) { // เพิ่ม parameter meetingStatus
   const percent = Math.min((current / target) * 100, 100);
   const statusEl = document.getElementById("voteStatus");
   
-  if (!statusEl) return; // กันพังถ้าลืมสร้าง ID นี้ใน HTML
+  if (!statusEl) return;
 
+  // 1. วาดแถบ Progress Bar ปกติ
   statusEl.innerHTML = `
     <div style="margin-bottom: 10px;">
       <strong>สถานะการโหวต:</strong> ${current} จาก ${target} คน
     </div>
-    <div style="width: 100%; background: #eee; border-radius: 10px; height: 15px; overflow: hidden;">
+    <div style="width: 100%; background: #eee; border-radius: 10px; height: 15px; overflow: hidden; margin-bottom: 10px;">
       <div style="width: ${percent}%; background: #4CAF50; height: 100%; transition: 0.5s;"></div>
     </div>
-    ${current >= target ? `<p style="color: green; font-size: 0.9em; margin-top:5px;">⭐ ครบจำนวนแล้ว! เลือกเวลาสรุปได้เลย</p>` : ""}
   `;
+
+  // 2. เช็คเงื่อนไข: ถ้ายังไม่สรุป (open) และโหวตครบแล้ว ถึงจะโชว์ข้อความและปุ่มคัดลอก
+  if (meetingStatus !== "finalized" && current >= target) {
+    statusEl.innerHTML += `
+      <p style="color: green; font-size: 0.9em; margin-top:5px;">⭐ ครบจำนวนแล้ว! เลือกเวลาสรุปได้เลย</p>
+      <button onclick="copyToClipboard()" style="margin-top:10px; padding:8px 15px; border-radius:8px; cursor:pointer;">
+        🔗 คัดลอกลิงก์ส่งให้เพื่อนมาโหวต
+      </button>
+    `;
+  }
 }
 
 // -------------------
