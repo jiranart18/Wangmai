@@ -175,12 +175,12 @@ button:hover {
 }
 
 .vote-cell.state-2 {
-  background: #035d21;   /* เขียวเข้ม */
+  background: #008e42;   /* เขียวเข้ม */
   color: white;
 }
 
 .vote-cell.state-1 {
-  background: #1ac052;   /* เขียวอ่อน */
+  background: #43e378;   /* เขียวอ่อน */
   color: black;
 }
 
@@ -223,7 +223,7 @@ button:hover {
   }
 .date-input:focus {
     outline: none;
-    border-color: #007AFF;
+    border-color: #02a059;
     background-color: #fff;
     box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
   }
