@@ -186,7 +186,7 @@ button:hover {
 
 .vote-cell.voted-other {
     position: relative;
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5); /* ทำขอบในให้รู้ว่าเป็นของคนอื่น */
+    box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 1); /* ทำขอบในให้รู้ว่าเป็นของคนอื่น */
 }
 
 /* Submit Button */
