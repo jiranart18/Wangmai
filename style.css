@@ -424,3 +424,31 @@ button:hover {
         padding: 15px;
     }
 }
+
+.hero-container {
+    position: relative;
+    overflow: hidden;
+}
+
+/* สร้างวงกลมจางๆ ไว้ที่พื้นหลัง */
+.hero-container::before {
+    content: "";
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(107, 112, 92, 0.05) 0%, rgba(255,255,255,0) 70%);
+    z-index: -1;
+}
+
+.hero-container::after {
+    content: "";
+    position: absolute;
+    bottom: -10%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(107, 112, 92, 0.08) 0%, rgba(255,255,255,0) 70%);
+    z-index: -1;
+}
