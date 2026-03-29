@@ -316,18 +316,17 @@ button:hover {
 
 /* ปุ่มคัดลอกลิงก์ (ปรับให้เข้ากับสไตล์ Border-radius ของคุณ) */
 .btn-copy-link {
-    width: auto; /* ไม่ต้องเต็มความกว้างเหมือนปุ่มหลัก */
-    display: inline-block;
-    margin-top: 12px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: 2px solid #6B705C;
-    background: white;
-    color: #6B705C;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
+  width: 100%;
+  padding: 14px;
+  margin-top: 24px;
+  background-color: transparent;
+  color: #6B705C;
+  border: 2px solid #6B705C;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn-copy-link:hover {
@@ -391,15 +390,15 @@ button:hover {
 /* ปุ่มกดไปหน้า Login */
 .btn-main {
     display: inline-block;
-    background-color: #6B705C;
-    color: white;
+    background-color: transparent;
+    color: #6B705C;
     padding: 18px 45px;
     border-radius: 12px;
     text-decoration: none;
     font-weight: bold;
+    cursor: pointer;
     font-size: 1.1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(107, 112, 92, 0.2);
 }
 
 .btn-main:hover {
