@@ -426,51 +426,44 @@ button:hover {
 }
 
 .hero-container {
-    position: relative;
-    overflow: hidden;
-}
-
-/* ปรับตัวแม่ให้รองรับตำแหน่ง */
-.hero-container {
-    position: relative;
-    overflow: hidden; /* กันวงกลมล้นออกนอกจอ */
-    background: #ffffff; /* พื้นหลังขาวสะอาด */
+    position: relative; /* สำคัญที่สุด */
+    overflow: hidden;    /* กันวงกลมล้นจอ */
     min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #ffffff;
 }
 
-/* วงกลมที่ 1: มุมขวาบน */
-.hero-container::before {
-    content: "";
+/* วงกลมก้อนที่ 1 */
+.circle-1 {
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(107, 112, 92, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
-    border-radius: 50%; /* บังคับเป็นวงกลม */
-    z-index: 0; /* เปลี่ยนจาก -1 เป็น 0 */
-}
-
-/* วงกลมที่ 2: มุมซ้ายล่าง */
-.hero-container::after {
-    content: "";
-    position: absolute;
-    bottom: -100px;
-    left: -100px;
-    width: 350px;
-    height: 350px;
-    background: radial-gradient(circle, rgba(107, 112, 92, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+    top: -150px;
+    right: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(107, 112, 92, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
     border-radius: 50%;
-    z-index: 0;
+    pointer-events: none; /* เพื่อให้เรายังคลิกปุ่มผ่านวงกลมได้ */
+    z-index: 1;
 }
 
-/* สำคัญ: ดันเนื้อหาขึ้นมาอยู่เหนือวงกลม */
+/* วงกลมก้อนที่ 2 */
+.circle-2 {
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(107, 112, 92, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ดันเนื้อหาให้อยู่บนสุด */
 .hero-content {
     position: relative;
-    z-index: 2; 
-    max-width: 650px;
+    z-index: 10; /* เลขเยอะๆ ข่มวงกลมไว้ */
     text-align: center;
 }
