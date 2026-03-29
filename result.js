@@ -439,7 +439,7 @@ window.copyVoteLink = function() {
   const currentUrl = new URL(window.location.href);
   
   // 2. เปลี่ยนแค่ชื่อไฟล์จาก results.html เป็นหน้าที่มีตารางเลือกเวลาของคุณ
-  // *** สำคัญ: ถ้าไฟล์หน้าตารางของคุณชื่อ index.html ให้เปลี่ยน 'vote.html' เป็น 'index.html' ***
+  
   currentUrl.pathname = currentUrl.pathname.replace("results.html", "vote.html");
 
   // 3. คัดลอก URL ที่สมบูรณ์ (ซึ่งจะมี ?id=... ติดไปด้วยแน่นอน)

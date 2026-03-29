@@ -6,7 +6,7 @@ async function initializeDashboard() {
     const { data: { session }, error: authError } = await supabase.auth.getSession();
     
     if (authError || !session) {
-        window.location.replace("index.html");
+        window.location.replace("login.html");
         return;
     }
 
@@ -123,7 +123,7 @@ if (logoutBtn) {
         if (!confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) return;
         await supabase.auth.signOut();
         localStorage.clear();
-        window.location.replace("index.html");
+        window.location.replace("login.html");
     };
 }
 
