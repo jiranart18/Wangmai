@@ -514,6 +514,7 @@ function generateICS(meetingTitle, startTime, endTime) {
     link.click();
     document.body.removeChild(link);
 }
+window.generateICS = generateICS;
 
 window.copyShareMessage = async function(datetime) {
 
