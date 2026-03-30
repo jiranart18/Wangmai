@@ -57,9 +57,9 @@ body {
 /* log out Button */
 .btn-logout {
   background-color: transparent;
-  color: #6B705C;
+  color: #8f1402;
   padding: 8px 18px;
-  border: 2px solid #6B705C;
+  border: 2px solid #8f1402;
   border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
@@ -68,7 +68,7 @@ body {
 }
 
 .btn-logout:hover {
-  background-color: #6B705C;
+  background-color: #8f1402;
   color: white;
   transform: scale(1.05);
 }
