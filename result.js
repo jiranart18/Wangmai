@@ -17,7 +17,7 @@ if (!roomId) {
   roomDisplay.innerText = roomId;
   init();
 }
-
+let fullShareMessage = "";
 // -------------------
 // INIT
 // -------------------
@@ -371,18 +371,50 @@ async function renderFinalized(datetime) {
       </div>
 
       <hr>
-      <button class="btn-share" id="btnShareWithFriend">
+      <button class="btn-share" onclick="window.handleFastCopy()">
         Link to add calendar appointment times for friends
       </button>
     </div>
   `;
-
-  // 4. ใช้ Event Listener แทน onclick ใน HTML เพื่อความชัวร์ 100% บนมือถือ
-  document.getElementById('btnShareWithFriend').addEventListener('click', function() {
-      copyToClipboardDirect(fullMessage);
-  });
-  
 }
+
+// -------------------
+// ฟังก์ชันคัดลอกแบบความเร็วสูง (รองรับทุกเครื่อง)
+// -------------------
+window.handleFastCopy = function() {
+  if (!fullShareMessage) {
+    alert("กำลังเตรียมข้อมูล กรุณาลองอีกครั้งในครู่เดียว");
+    return;
+  }
+
+  const textArea = document.createElement("textarea");
+  textArea.value = fullShareMessage;
+  
+  // ตั้งค่าให้ซ่อนแต่ยัง Focus ได้ (สำคัญสำหรับ iOS)
+  textArea.style.position = "fixed";
+  textArea.style.left = "-9999px";
+  textArea.style.top = "0";
+  document.body.appendChild(textArea);
+  
+  textArea.focus();
+  textArea.select();
+  textArea.setSelectionRange(0, 99999); // บังคับคลุมดำบน iPhone
+
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      alert("✅ คัดลอกข้อความส่งเพื่อนสำเร็จ!");
+    } else {
+      alert("❌ คัดลอกไม่สำเร็จ");
+    }
+  } catch (err) {
+    alert("❌ เบราว์เซอร์ไม่รองรับการคัดลอก");
+  }
+
+  document.body.removeChild(textArea);
+};
+  
+
 
 // -------------------
 // Format Date
@@ -522,7 +554,7 @@ function generateICS(meetingTitle, startTime, endTime) {
     document.body.removeChild(link);
 }
 window.generateICS = generateICS;
-
+/*
 window.copyShareMessage = async function(datetime) {
   // 1. ดึงข้อมูลห้อง (ดึงมารอก่อน)
   const { data: meeting } = await supabase
@@ -546,46 +578,4 @@ window.copyShareMessage = async function(datetime) {
 
   const message = `นัดหมาย\n\n🟢 คนใช้ Google Calendar:\n${googleLink}\n\n🔵 คนใช้ Apple / Outlook / อื่น ๆ:\n${icsLink}\n\nกดแล้วเพิ่มเข้าปฏิทินได้เลย`;
 
-  // 2. ใช้ฟังก์ชันคัดลอกแบบพิเศษ (รองรับมือถือ)
-  copyToClipboardFallback(message);
-};
-
-// ฟังก์ชันเสริมสำหรับคัดลอก (วางไว้ท้ายไฟล์)
-function copyToClipboardFallback(text) {
-  // วิธีที่ 1: ลองวิธีสมัยใหม่ก่อน
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text)
-      .then(() => alert("คัดลอกข้อความสำเร็จ!"))
-      .catch(() => fallbackMethod(text)); // ถ้าพลาดให้ไปใช้วิธีสำรอง
-  } else {
-    fallbackMethod(text);
-  }
-}
-
-function fallbackMethod(text) {
-  const textArea = document.createElement("textarea");
-  textArea.value = text;
-  
-  // ทำให้ textarea มองไม่เห็น
-  textArea.style.position = "fixed";
-  textArea.style.left = "-9999px";
-  textArea.style.top = "0";
-  document.body.appendChild(textArea);
-  
-  textArea.focus();
-  textArea.select();
-  textArea.setSelectionRange(0, 99999); // สำหรับ iOS
-
-  try {
-    const successful = document.execCommand('copy');
-    if (successful) {
-      alert("คัดลอกข้อความสำเร็จ!");
-    } else {
-      alert("คัดลอกไม่สำเร็จ กรุณาคัดลอกด้วยตนเอง");
-    }
-  } catch (err) {
-    alert("เบราว์เซอร์ไม่รองรับการคัดลอกอัตโนมัติ");
-  }
-
-  document.body.removeChild(textArea);
-}
+};*/
