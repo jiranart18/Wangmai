@@ -5,7 +5,7 @@ import { supabase } from './supabase-config.js';
 // -------------------
 const params = new URLSearchParams(window.location.search);
 const roomId = params.get("id");
-
+let fullShareMessage = "";
 const bestTimeContainer = document.getElementById("bestTimeResult");
 const participantList = document.getElementById("participantList");
 const participantCount = document.getElementById("participantCount");
@@ -17,7 +17,7 @@ if (!roomId) {
   roomDisplay.innerText = roomId;
   init();
 }
-let fullShareMessage = "";
+
 // -------------------
 // INIT
 // -------------------
@@ -354,7 +354,7 @@ async function renderFinalized(datetime) {
   const endTime = `${date} ${dEnd.toTimeString().split(' ')[0].substring(0, 5)}`;
 
   const googleLink = generateGoogleCalendarLink(meeting.title, date, time);
-
+  window.fullShareMessage = `นัดหมาย: ${meeting.title}\n\n🟢 สำหรับ Google Calendar:\n${googleLink}\n\n🔵 สำหรับ Apple / อื่น ๆ:\n${icsLink}\n\nกดเพิ่มเข้าปฏิทินได้เลย!`;
   bestTimeContainer.innerHTML = `
     <div class="finalized-card">
       
