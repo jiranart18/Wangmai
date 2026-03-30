@@ -359,7 +359,7 @@ async function renderFinalized(datetime) {
   const pathParts = currentUrl.pathname.split('/');
   pathParts[pathParts.length - 1] = 'ics.html';
   const icsLink = `${currentUrl.origin}${pathParts.join('/')}?id=${roomId}`;
-  
+
   window.fullShareMessage = `นัดหมาย: ${meeting.title}\n\n🟢 สำหรับ Google Calendar:\n${googleLink}\n\n🔵 สำหรับ Apple / อื่น ๆ:\n${icsLink}\n\nกดเพิ่มเข้าปฏิทินได้เลย!`;
   bestTimeContainer.innerHTML = `
     <div class="finalized-card">
@@ -388,13 +388,13 @@ async function renderFinalized(datetime) {
 // ฟังก์ชันคัดลอกแบบความเร็วสูง (รองรับทุกเครื่อง)
 // -------------------
 window.handleFastCopy = function() {
-  if (!fullShareMessage) {
-    alert("กำลังเตรียมข้อมูล กรุณาลองอีกครั้งในครู่เดียว");
+ if (!window.fullShareMessage || window.fullShareMessage === "") {
+    alert("ข้อมูลยังไม่พร้อม หรือหาลิงก์ไม่เจอ กรุณารอครู่เดียวครับ");
     return;
   }
 
   const textArea = document.createElement("textarea");
-  textArea.value = fullShareMessage;
+  textArea.value = window.fullShareMessage;;
   
   // ตั้งค่าให้ซ่อนแต่ยัง Focus ได้ (สำคัญสำหรับ iOS)
   textArea.style.position = "fixed";
