@@ -28,7 +28,7 @@ async function initVotingPage() {
   // 3. แสดงชื่อห้องจริงแทน ID
   document.getElementById(
     'roomNameDisplay'
-  ).innerText = `คุณกำลังอยู่ในห้อง: ${meeting.title}`;
+  ).innerText = `you are in the room: ${meeting.title}`;
 
   // 4. สร้างรายการวันที่ (Logic: วนลูปจาก Start Date ถึง End Date)
   const startDate = new Date(meeting.dates.start);

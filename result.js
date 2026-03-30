@@ -98,7 +98,7 @@ async function loadResults() {
 
   // 5. เช็คสถานะ: ถ้ายังไม่มีใครโหวต
   if (!votes || votes.length === 0) {
-    bestTimeContainer.innerHTML = "<p>ยังไม่มีการโหวต</p>";
+    bestTimeContainer.innerHTML = "<p>No votes yet</p>";
     return;
   }
 
@@ -113,8 +113,8 @@ async function loadResults() {
     bestTimeContainer.innerHTML = `
       <div class="waiting-card">
         <span class="icon">⏳</span>
-        <p class="status-text">รอผู้สร้างเลือกเวลานัดหมาย...</p>
-        <span class="vote-count">(ตอนนี้โหวตไปแล้ว ${votes.length} คน)</span>
+        <p class="status-text">Waiting for the creator to choose an appointment time...</p>
+        <span class="vote-count">(There are currently ${votes.length} people voting.)</span>
       </div>
     `;
   }
@@ -131,7 +131,7 @@ function renderProgressBar(current, target, meetingStatus) { // เพิ่ม 
   statusEl.innerHTML = `
       <div class="vote-status-container">
           <div class="vote-status-text">
-              สถานะการโหวต: ${current} จาก ${target} คน
+              Voting status: ${current} people out of  ${target} people
           </div>
           <div class="progress-bar-bg">
               <div class="progress-bar-fill" style="width: ${percent}%;"></div>
@@ -143,10 +143,10 @@ function renderProgressBar(current, target, meetingStatus) { // เพิ่ม 
   if (meetingStatus !== "finalized" && current >= target) {
       statusEl.innerHTML += `
           <div class="complete-badge">
-              <span>⭐</span> ครบจำนวนแล้ว! เลือกเวลาสรุปได้เลย
+              <span>⭐</span> The amount is complete! Select summary time
           </div>
           <button class="btn-copy-link" onclick="copyVoteLink()">
-              🔗 คัดลอกลิงก์ส่งให้เพื่อน
+              Link for friends to vote.
           </button>
       `;
   }
@@ -292,7 +292,7 @@ function renderTop3(top3) {
         คะแนนรวม: ${score}
         <br>
         <button onclick="selectTime('${datetime}')">
-          เลือกเวลานี้
+          Choose this time
         </button>
       </div>
     `).join('')}
@@ -357,7 +357,7 @@ async function renderFinalized(datetime) {
 
   bestTimeContainer.innerHTML = `
     <div class="finalized-card">
-      <h3>✅ สรุปเวลาเรียบร้อยแล้ว</h3>
+      
       <div class="final-time">${formatDateTime(datetime)}</div>
       
       <div class="calendar-buttons">
@@ -366,13 +366,13 @@ async function renderFinalized(datetime) {
         </button>
         
         <button class="btn-ics" onclick="generateICS('${meeting.title}', '${startTime}', '${endTime}')">
-          เพิ่มลง iPhone / อื่นๆ (ICS)
+          Add to iPhone / Other (ICS)
         </button>
       </div>
 
       <hr>
       <button class="btn-share" onclick="copyShareMessage('${datetime}')">
-        คัดลอกข้อความส่งให้เพื่อน
+        Link to add calendar appointment times for friends
       </button>
     </div>
   `;
@@ -446,7 +446,7 @@ window.copyVoteLink = function() {
   const finalLink = currentUrl.toString();
 
   navigator.clipboard.writeText(finalLink).then(() => {
-    alert("คัดลอกลิงก์สำหรับส่งให้เพื่อนมาโหวตแล้ว! 🚀");
+    alert("คัดลอกลิงก์สำหรับส่งให้เพื่อนมาโหวตแล้ว! ");
   }).catch(err => {
     console.error("Copy error:", err);
     alert("ก๊อปปี้ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
@@ -507,7 +507,7 @@ function generateICS(meetingTitle, startTime, endTime) {
         `DTSTART:${start}`,
         `DTEND:${end}`,
         `SUMMARY:${meetingTitle}`,
-        'DESCRIPTION:นัดหมายจากระบบ GroupSync',
+        'DESCRIPTION:นัดหมาย',
         'LOCATION:Online',
         'END:VEVENT',
         'END:VCALENDAR'

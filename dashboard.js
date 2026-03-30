@@ -40,7 +40,7 @@ async function loadMyMeetings(userId) {
         if (!rooms || rooms.length === 0) {
             if (activeCountEl) activeCountEl.innerText = "0";
             if (mainContainer) {
-                mainContainer.innerHTML = `<div class="empty-state"><p>ยังไม่มีห้องประชุมที่คุณสร้างไว้</p></div>`;
+                mainContainer.innerHTML = `<div class="empty-state"><p>You haven't created a meeting room yet.</p></div>`;
             }
             return;
         }
@@ -58,19 +58,19 @@ async function loadMyMeetings(userId) {
         const createCardHTML = (room, isCompleted) => `
             <div class="meeting-card ${isCompleted ? 'completed' : ''}">
                 <div class="card-header">
-                    <h3>${room.meeting_name || room.title || 'ไม่มีชื่อห้อง'}</h3>
+                    <h3>${room.meeting_name || room.title || 'No room name'}</h3>
                     <span class="badge ${isCompleted ? 'badge-done' : 'badge-active'}">
-                        ${isCompleted ? '✅ สรุปผลแล้ว' : '🔥 กำลังเปิดโหวต'}
+                        ${isCompleted ? 'Results summarized' : 'Voting is now open'}
                     </span>
                 </div>
                 <div class="card-body">
-                    <p>📅 ${room.start_date || room.dates?.start} - ${room.end_date || room.dates?.end}</p>
+                    <p> ${room.start_date || room.dates?.start} to ${room.end_date || room.dates?.end}</p>
                 </div>
                 <div class="card-footer">
                     ${isCompleted 
-                        ? `<button class="btn-result" onclick="location.href='results.html?id=${room.id}'">ดูผลสรุปท้ายสุด</button>`
-                        : `<button class="btn-primary" onclick="location.href='results.html?id=${room.id}'">ดูผลเรียลไทม์</button>
-                           <button class="btn-secondary" onclick="location.href='vote.html?id=${room.id}'">ไปหน้าโหวต</button>`
+                        ? `<button class="btn-result" onclick="location.href='results.html?id=${room.id}'">See the final results</button>`
+                        : `<button class="btn-primary" onclick="location.href='results.html?id=${room.id}'">See real time results</button>
+                           <button class="btn-secondary" onclick="location.href='vote.html?id=${room.id}'">Go to the voting page.</button>`
                     }
                 </div>
             </div>
@@ -80,13 +80,13 @@ async function loadMyMeetings(userId) {
         if (activeContainer) {
             activeContainer.innerHTML = activeRooms.length > 0 
                 ? activeRooms.map(r => createCardHTML(r, false)).join('') 
-                : '<p class="empty-text">ไม่มีรายการที่กำลังโหวต</p>';
+                : '<p class="empty-text">No items have been voted on at this time.</p>';
         }
 
         if (completedContainer) {
             completedContainer.innerHTML = completedRooms.length > 0 
                 ? completedRooms.map(r => createCardHTML(r, true)).join('') 
-                : '<p class="empty-text">ไม่มีรายการที่สรุปผลแล้ว</p>';
+                : '<p class="empty-text">There is no summary list.</p>';
         }
 
         // ซ่อนข้อความ Loading
