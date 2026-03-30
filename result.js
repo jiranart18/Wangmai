@@ -517,7 +517,7 @@ function generateICS(meetingTitle, startTime, endTime) {
 window.generateICS = generateICS;
 
 window.copyShareMessage = async function(datetime) {
-
+  // 1. ดึงข้อมูลห้อง (ดึงมารอก่อน)
   const { data: meeting } = await supabase
     .from("rooms")
     .select("title")
@@ -530,41 +530,55 @@ window.copyShareMessage = async function(datetime) {
   }
 
   const [date, time] = datetime.split(" ");
-
-  const googleLink =
-    window.generateGoogleCalendarLink(
-      meeting.title,
-      date,
-      time
-    );
-
+  const googleLink = window.generateGoogleCalendarLink(meeting.title, date, time);
   
-  // ในฟังก์ชัน window.copyShareMessage
   const currentUrl = new URL(window.location.href);
   const pathParts = currentUrl.pathname.split('/');
-  
-  // ลบชื่อไฟล์ปัจจุบันแทนที่ด้วย ics.html
   pathParts[pathParts.length - 1] = 'ics.html';
-  
-  // ประกอบร่างใหม่โดยอ้างอิงจาก Origin เดิม
   const icsLink = `${currentUrl.origin}${pathParts.join('/')}?id=${roomId}`;
 
-  const message =
-  `นัดหมาย
+  const message = `นัดหมาย\n\n🟢 คนใช้ Google Calendar:\n${googleLink}\n\n🔵 คนใช้ Apple / Outlook / อื่น ๆ:\n${icsLink}\n\nกดแล้วเพิ่มเข้าปฏิทินได้เลย`;
 
-  🟢 คนใช้ Google Calendar:
-  ${googleLink}
+  // 2. ใช้ฟังก์ชันคัดลอกแบบพิเศษ (รองรับมือถือ)
+  copyToClipboardFallback(message);
+};
 
-  🔵 คนใช้ Apple / Outlook / อื่น ๆ:
-  ${icsLink}
+// ฟังก์ชันเสริมสำหรับคัดลอก (วางไว้ท้ายไฟล์)
+function copyToClipboardFallback(text) {
+  // วิธีที่ 1: ลองวิธีสมัยใหม่ก่อน
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert("คัดลอกข้อความสำเร็จ!"))
+      .catch(() => fallbackMethod(text)); // ถ้าพลาดให้ไปใช้วิธีสำรอง
+  } else {
+    fallbackMethod(text);
+  }
+}
 
-  กดแล้วเพิ่มเข้าปฏิทินได้เลย`;
+function fallbackMethod(text) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  
+  // ทำให้ textarea มองไม่เห็น
+  textArea.style.position = "fixed";
+  textArea.style.left = "-9999px";
+  textArea.style.top = "0";
+  document.body.appendChild(textArea);
+  
+  textArea.focus();
+  textArea.select();
+  textArea.setSelectionRange(0, 99999); // สำหรับ iOS
 
   try {
-    await navigator.clipboard.writeText(message);
-    alert("คัดลอกข้อความส่งเพื่อนแล้ว!");
+    const successful = document.execCommand('copy');
+    if (successful) {
+      alert("คัดลอกข้อความสำเร็จ!");
+    } else {
+      alert("คัดลอกไม่สำเร็จ กรุณาคัดลอกด้วยตนเอง");
+    }
   } catch (err) {
-    console.error(err);
-    alert("คัดลอกไม่สำเร็จ");
+    alert("เบราว์เซอร์ไม่รองรับการคัดลอกอัตโนมัติ");
   }
-};
+
+  document.body.removeChild(textArea);
+}
