@@ -371,12 +371,19 @@ async function renderFinalized(datetime) {
       </div>
 
       <hr>
-      <button class="btn-share" onclick="copyShareMessage('${datetime}')">
+      <button class="btn-share" id="btnShareWithFriend">
         Link to add calendar appointment times for friends
       </button>
     </div>
   `;
+
+  // 4. ใช้ Event Listener แทน onclick ใน HTML เพื่อความชัวร์ 100% บนมือถือ
+  document.getElementById('btnShareWithFriend').addEventListener('click', function() {
+      copyToClipboardDirect(fullMessage);
+  });
+  
 }
+
 // -------------------
 // Format Date
 // -------------------
