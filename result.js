@@ -354,6 +354,12 @@ async function renderFinalized(datetime) {
   const endTime = `${date} ${dEnd.toTimeString().split(' ')[0].substring(0, 5)}`;
 
   const googleLink = generateGoogleCalendarLink(meeting.title, date, time);
+
+  const currentUrl = new URL(window.location.href);
+  const pathParts = currentUrl.pathname.split('/');
+  pathParts[pathParts.length - 1] = 'ics.html';
+  const icsLink = `${currentUrl.origin}${pathParts.join('/')}?id=${roomId}`;
+  
   window.fullShareMessage = `นัดหมาย: ${meeting.title}\n\n🟢 สำหรับ Google Calendar:\n${googleLink}\n\n🔵 สำหรับ Apple / อื่น ๆ:\n${icsLink}\n\nกดเพิ่มเข้าปฏิทินได้เลย!`;
   bestTimeContainer.innerHTML = `
     <div class="finalized-card">
