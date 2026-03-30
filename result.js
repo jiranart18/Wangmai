@@ -398,41 +398,32 @@ function formatDateTime(datetime) {
 // Realtime
 // -------------------
 function setupRealtime() {
-  // ดักฟังการเปลี่ยนแปลงของห้องนี้ (เช่น เมื่อ status เปลี่ยนเป็น finalized)
+  // 1. ดักฟังห้อง (เมื่อเจ้าของกดสรุปเวลา)
   supabase
     .channel("room-updates")
     .on(
       "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "rooms",
-        filter: `id=eq.${roomId}`
-      },
-      () => {
-        loadResults(); // เมื่อห้องมีการ update ให้รีโหลดหน้าทันที
+      { event: "UPDATE", schema: "public", table: "rooms", filter: `id=eq.${roomId}` },
+      () => { 
+        console.log("Room updated!");
+        loadResults(); 
       }
     )
     .subscribe();
 
-  // ดักฟังคนมาโหวตเพิ่ม (โค้ดเดิมของคุณ)
+  // 2. ดักฟังการโหวต (เมื่อเพื่อนกดโหวต)
   supabase
     .channel("votes-live")
     .on(
       "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "votes",
-        filter: `meeting_id=eq.${roomId}`
-      },
-      () => {
-        loadResults();
+      { event: "*", schema: "public", table: "votes", filter: `meeting_id=eq.${roomId}` },
+      () => { 
+        console.log("New vote detected!");
+        loadResults(); // ต้องมั่นใจว่าฟังก์ชันนี้มีการดึง data ใหม่และสั่งวาดตารางใหม่ (Render)
       }
     )
     .subscribe();
 }
-
 /*------------------ส่งลิ้งโหวตให้เพื่อน-----------*/
 window.copyVoteLink = function() {
   // 1. ดึง URL ปัจจุบัน (หน้า Results)
@@ -485,8 +476,7 @@ window.copyGoogleLink = function(title, date, time) {
 }
 
 function generateICS(meetingTitle, startTime, endTime) {
-    // 1. จัดฟอร์แมตวันที่ให้ iPhone อ่านออก (ห้ามมี - และ :)
-    // สมมติ startTime มาเป็น "2026-03-20 09:00"
+    // 1. จัดฟอร์แมตวันที่ให้ iPhone อ่านออก 
     const formatDate = (dateStr) => {
         return dateStr.replace(/[-:]/g, '').replace(' ', 'T') + '00';
         // ผลลัพธ์จะได้เป็น: 20260320T090000
