@@ -139,6 +139,7 @@ function renderProgressBar(current, target, meetingStatus) {
   `;
 
   // 2. เช็คเงื่อนไขโหวตครบ
+  let extraContent = "";
   if (meetingStatus !== "finalized") {
     extraContent += `
           <button class="btn-copy-link" onclick="copyVoteLink()">
@@ -151,7 +152,7 @@ function renderProgressBar(current, target, meetingStatus) {
           <div class="complete-badge">
               <span>⭐</span> The amount is complete! Select summary time
           </div>
-      `;
+      `+ extraContent;;
   }
 }
 
