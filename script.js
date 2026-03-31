@@ -54,7 +54,7 @@ function renderGrid(dateList) {
   tableHeader.innerHTML =  '';
   tableBody.innerHTML = '';
 
-  // กำหนดช่วงเวลา (แก้ไขเพิ่ม/ลดได้ตรงนี้)
+  // กำหนดช่วงเวลา 
   const timeSlots = [
     "07:00","08:00","09:00", "10:00", "11:00", "12:00",
     "13:00", "14:00", "15:00", "16:00",
@@ -121,8 +121,6 @@ function attachVotingLogic() {
       }
 
       cell.setAttribute('data-state', nextState);
-
-      // เปลี่ยน class อย่างเดียว
       cell.className = `vote-cell state-${nextState}`;
     });
   });
@@ -133,7 +131,7 @@ initVotingPage();
 
 
 
-// ผูกฟังก์ชันกับปุ่ม (ถ้าคุณมีปุ่ม Share ใน HTML)
+// ผูกฟังก์ชันกับปุ่ม 
 const btnShare = document.getElementById("btnShare");
 
 if (btnShare) {
@@ -168,19 +166,19 @@ async function submitAvailability() {
     voteData[date][time] = state;
   });
 
-  // ใน script.js ส่วน function submitAvailability
+
 try {
   // 1. ตรวจสอบค่าก่อนส่ง
   if (!userName) { alert("กรุณากรอกชื่อ"); return; }
   
-  // 2. ส่งข้อมูล (ใช้ชื่อให้ตรงกับ SQL เป๊ะๆ)
+  // 2. ส่งข้อมูล 
   const { error: insertError } = await supabase
     .from("votes")
     .insert([
       {
         meeting_id: roomId,
         user_name: userName,
-        vote_data: voteData // <--- ชื่อต้องตรงกับใน SQL และ Supabase Dashboard
+        vote_data: voteData 
       }
     ]);
 

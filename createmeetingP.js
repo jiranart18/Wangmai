@@ -43,7 +43,7 @@ btnContinue.addEventListener('click', async () => {
     };
 
     try {
-        // 4. ส่งข้อมูลเข้าตาราง 'rooms' (ส่งครั้งเดียวพอครับ)
+        // 4. ส่งข้อมูลเข้าตาราง 'rooms' 
         const { data, error } = await supabase
             .from('rooms')
             .insert([meetingData])
@@ -88,7 +88,7 @@ async function saveRoomToDatabase() {
             meeting_name: roomName, 
             start_date: startDate, 
             end_date: endDate,
-            creator_id: user.id // <--- ต้องส่งบรรทัดนี้ไปด้วยเสมอ!
+            creator_id: user.id 
         
         }]);
 }
@@ -96,7 +96,7 @@ async function saveRoomToDatabase() {
 // ดึงปุ่มทั้งหมดมาสร้าง Event การคลิก
 document.querySelectorAll('button').forEach(btn => {
     btn.addEventListener('click', function() {
-        // 1. เช็กก่อนว่าปุ่มที่กด "ไม่ใช่" ปุ่ม Continue (เพราะปุ่มนั้นกดแล้วไปหน้าอื่น ไม่ต้องค้างสี)
+        // 1. เช็กก่อนว่าปุ่มที่กด "ไม่ใช่" ปุ่ม Continue 
         if (this.id === 'continue-btn') return;
 
         // 2. ลบสีจากปุ่มอื่นออกให้หมด

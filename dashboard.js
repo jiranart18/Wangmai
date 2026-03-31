@@ -91,8 +91,6 @@ async function loadMyMeetings(userId) {
 
         // ซ่อนข้อความ Loading
         if (mainContainer && rooms.length > 0) {
-             // ถ้าคุณต้องการซ่อน mainContainer เมื่อมีข้อมูลในกล่องแยก ให้เปิดบรรทัดล่าง
-             // mainContainer.style.display = 'none'; 
         }
 
     } catch (err) {

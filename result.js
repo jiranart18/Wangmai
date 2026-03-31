@@ -30,14 +30,14 @@ async function init() {
 // Check Creator
 // -------------------
 async function isCreator() {
-  // 1. ดึงข้อมูล User ที่กำลัง Login อยู่ใน Browser นี้ (ถ้ามี)
+  // 1. ดึงข้อมูล User ที่กำลัง Login อยู่ใน Browser นี้ 
   const { data: { session } } = await supabase.auth.getSession();
   const currentUser = session?.user;
 
   // 2. ดึงข้อมูลห้องเพื่อดูว่าใครคือเจ้าของ (เช็คจากคอลัมน์ creator_id)
   const { data: room } = await supabase
     .from("rooms")
-    .select("creator_id") // เปลี่ยนจาก creator_token เป็น creator_id
+    .select("creator_id") 
     .eq("id", roomId)
     .single();
 
@@ -53,7 +53,7 @@ async function isCreator() {
 // Load Results 
 // -------------------
 async function loadResults() {
-  // 1. ดึงข้อมูลห้อง (ดึงครั้งเดียวให้คุ้ม)
+  // 1. ดึงข้อมูลห้อง 
   const { data: meeting, error: roomError } = await supabase
     .from("rooms")
     .select("*")
@@ -80,7 +80,6 @@ async function loadResults() {
   displayParticipants(votes || []);
   renderProgressBar(votes.length, meeting.required_voters || 1, meeting.status);
 
-  // --- แทรกโค้ดจัดการปุ่มคัดลอกตรงนี้ ---
   const copyBtn = document.getElementById("btnCopyVoteLink"); 
   if (copyBtn) {
       if (meeting.status === "finalized") {
@@ -90,7 +89,7 @@ async function loadResults() {
       }
   }
 
-  // 4. เช็คสถานะ: ถ้าสรุปผลแล้ว (Finalized)
+  // 4. เช็คสถานะ: ถ้าสรุปผลแล้ว
   if (meeting.status === "finalized" && meeting.selected_time) {
     renderFinalized(meeting.selected_time);
     return;
@@ -102,7 +101,7 @@ async function loadResults() {
     return;
   }
 
- // 6. เช็คสิทธิ์ Creator: ใช้ฟังก์ชันเช็คจากระบบ Login (async/await)
+ // 6. เช็คสิทธิ์ Creator: ใช้ฟังก์ชันเช็คจากระบบ Login 
   const creator = await isCreator();
 
   if (creator) {
@@ -120,8 +119,8 @@ async function loadResults() {
   }
 }
 
-// ฟังก์ชันแยกสำหรับวาด Progress Bar (ช่วยให้โค้ดสะอาดขึ้น)
-function renderProgressBar(current, target, meetingStatus) { // เพิ่ม parameter meetingStatus
+// ฟังก์ชันแยกสำหรับวาด Progress Bar 
+function renderProgressBar(current, target, meetingStatus) { 
   const percent = Math.min((current / target) * 100, 100);
   const statusEl = document.getElementById("voteStatus");
   
@@ -140,14 +139,18 @@ function renderProgressBar(current, target, meetingStatus) { // เพิ่ม 
   `;
 
   // 2. เช็คเงื่อนไขโหวตครบ
+  if (meetingStatus !== "finalized") {
+    extraContent += `
+          <button class="btn-copy-link" onclick="copyVoteLink()">
+              Link for friends to vote.
+          </button>
+    `;
+  }
   if (meetingStatus !== "finalized" && current >= target) {
       statusEl.innerHTML += `
           <div class="complete-badge">
               <span>⭐</span> The amount is complete! Select summary time
           </div>
-          <button class="btn-copy-link" onclick="copyVoteLink()">
-              Link for friends to vote.
-          </button>
       `;
   }
 }
@@ -222,7 +225,7 @@ function applyTypeRules(type, scoreMap, unavailableCount, totalPeople) {
         if (taVote) {
             const taFreeTimes = taVote.vote_data.free || [];
             if (!taFreeTimes.includes(key)) {
-                // ถ้า TA ไม่ว่าง หักไปเลย 100 แต้ม (ให้ร่วงไปท้ายตาราง)
+                // ถ้า TA ไม่ว่าง หักไปเลย 100 แต้ม 
                 scoreMap[key] -= 100;
             }
         }
@@ -238,7 +241,7 @@ function applyTypeRules(type, scoreMap, unavailableCount, totalPeople) {
    const tutorVote = votes.find(v => v.user_id === meeting.creator_id || v.user_name === "เจ้าของห้อง");
 
     if (tutorVote) {
-        // ดึงรายการเวลาที่ติวเตอร์เลือกไว้ (สมมติเก็บใน vote_data.free)
+        // ดึงรายการเวลาที่ติวเตอร์เลือกไว้ 
         const tutorFreeTimes = tutorVote.vote_data.free || []; 
 
         Object.keys(scoreMap).forEach(key => {
@@ -246,7 +249,6 @@ function applyTypeRules(type, scoreMap, unavailableCount, totalPeople) {
                 // ถ้าติวเตอร์ว่าง ให้คะแนนความสำคัญเป็น 3 เท่า!
                 scoreMap[key] = scoreMap[key] * 3;
             } else {
-                // ถ้าติวเตอร์ไม่ว่าง ช่วงเวลานั้นแทบจะไร้ความหมาย (หักคะแนนหนัก)
                 scoreMap[key] = -9999;
             }
         });
@@ -317,7 +319,7 @@ window.selectTime = async function(datetime) {
                 status: "finalized"
             })
             .eq("id", roomId)
-            .select(); // เพิ่ม .select() เพื่อเช็คว่ามี data กลับมาไหม
+            .select(); //เช็คว่ามี data กลับมาไหม
 
         if (error) {
             console.error("Update Error:", error.message);
@@ -385,7 +387,7 @@ async function renderFinalized(datetime) {
 }
 
 // -------------------
-// ฟังก์ชันคัดลอกแบบความเร็วสูง (รองรับทุกเครื่อง)
+// ฟังก์ชันคัดลอก
 // -------------------
 window.handleFastCopy = function() {
  if (!window.fullShareMessage || window.fullShareMessage === "") {
@@ -404,7 +406,7 @@ window.handleFastCopy = function() {
   
   textArea.focus();
   textArea.select();
-  textArea.setSelectionRange(0, 99999); // บังคับคลุมดำบน iPhone
+  textArea.setSelectionRange(0, 99999); 
 
   try {
     const successful = document.execCommand('copy');
@@ -474,11 +476,11 @@ window.copyVoteLink = function() {
   // 1. ดึง URL ปัจจุบัน (หน้า Results)
   const currentUrl = new URL(window.location.href);
   
-  // 2. เปลี่ยนแค่ชื่อไฟล์จาก results.html เป็นหน้าที่มีตารางเลือกเวลาของคุณ
+  // 2. เปลี่ยนแค่ชื่อไฟล์จาก results.html เป็นหน้าที่มีตารางเลือกเวลา
   
   currentUrl.pathname = currentUrl.pathname.replace("results.html", "vote.html");
 
-  // 3. คัดลอก URL ที่สมบูรณ์ (ซึ่งจะมี ?id=... ติดไปด้วยแน่นอน)
+  // 3. คัดลอก URL ที่สมบูรณ์ 
   const finalLink = currentUrl.toString();
 
   navigator.clipboard.writeText(finalLink).then(() => {
@@ -524,7 +526,6 @@ function generateICS(meetingTitle, startTime, endTime) {
     // 1. จัดฟอร์แมตวันที่ให้ iPhone อ่านออก 
     const formatDate = (dateStr) => {
         return dateStr.replace(/[-:]/g, '').replace(' ', 'T') + '00';
-        // ผลลัพธ์จะได้เป็น: 20260320T090000
     };
 
     const start = formatDate(startTime);
@@ -535,7 +536,7 @@ function generateICS(meetingTitle, startTime, endTime) {
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
         'PRODID:-//GroupSync//NONSGML v1.0//EN',
-        'METHOD:PUBLISH', // สำคัญ: ช่วยให้ iOS เด้งหน้า Add Event
+        'METHOD:PUBLISH', // ช่วยให้ iOS เด้งหน้า Add Event
         'BEGIN:VEVENT',
         `UID:${Date.now()}@groupsync.com`,
         `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
@@ -546,7 +547,7 @@ function generateICS(meetingTitle, startTime, endTime) {
         'LOCATION:Online',
         'END:VEVENT',
         'END:VCALENDAR'
-    ].join('\r\n'); // ใช้ \r\n เพื่อความเป๊ะบน iOS
+    ].join('\r\n'); 
 
     // 3. สร้างการดาวน์โหลด
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
@@ -560,28 +561,4 @@ function generateICS(meetingTitle, startTime, endTime) {
     document.body.removeChild(link);
 }
 window.generateICS = generateICS;
-/*
-window.copyShareMessage = async function(datetime) {
-  // 1. ดึงข้อมูลห้อง (ดึงมารอก่อน)
-  const { data: meeting } = await supabase
-    .from("rooms")
-    .select("title")
-    .eq("id", roomId)
-    .single();
 
-  if (!meeting) {
-    alert("ไม่พบข้อมูลห้องประชุม");
-    return;
-  }
-
-  const [date, time] = datetime.split(" ");
-  const googleLink = window.generateGoogleCalendarLink(meeting.title, date, time);
-  
-  const currentUrl = new URL(window.location.href);
-  const pathParts = currentUrl.pathname.split('/');
-  pathParts[pathParts.length - 1] = 'ics.html';
-  const icsLink = `${currentUrl.origin}${pathParts.join('/')}?id=${roomId}`;
-
-  const message = `นัดหมาย\n\n🟢 คนใช้ Google Calendar:\n${googleLink}\n\n🔵 คนใช้ Apple / Outlook / อื่น ๆ:\n${icsLink}\n\nกดแล้วเพิ่มเข้าปฏิทินได้เลย`;
-
-};*/
