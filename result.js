@@ -106,7 +106,7 @@ async function loadResults() {
 
   if (creator) {
     // ถ้าเป็นเจ้าของ: ให้คำนวณ Top 3 และโชว์ปุ่มเลือกเวลา
-    calculateTop3(votes, meeting.type);
+    calculateTop3(votes, meeting);
   } else {
     // ถ้าเป็นเพื่อน: ให้โชว์ข้อความรอเจ้าของสรุป 
     bestTimeContainer.innerHTML = `
@@ -135,24 +135,25 @@ function renderProgressBar(current, target, meetingStatus) {
           <div class="progress-bar-bg">
               <div class="progress-bar-fill" style="width: ${percent}%;"></div>
           </div>
+          <div id="actionArea"></div> 
       </div>
   `;
 
   // 2. เช็คเงื่อนไขโหวตครบ
-  let extraContent = "";
+  const actionArea = document.getElementById("actionArea");
   if (meetingStatus !== "finalized") {
-    extraContent += `
+    actionArea.innerHTML +=`
           <button class="btn-copy-link" onclick="copyVoteLink()">
               Link for friends to vote.
           </button>
     `;
   }
   if (meetingStatus !== "finalized" && current >= target) {
-      statusEl.innerHTML += `
+      actionArea.innerHTML += `
           <div class="complete-badge">
               <span>⭐</span> The amount is complete! Select summary time
           </div>
-      `+ extraContent;;
+      `;
   }
 }
 
@@ -207,7 +208,7 @@ function buildScoreMap(votes) {
 
   return { scoreMap, unavailableCount };
 }
-function applyTypeRules(type, scoreMap, unavailableCount, totalPeople) {
+function applyTypeRules(type, scoreMap, unavailableCount, totalPeople, votes, meeting) {
 
   if (type === "Group Work") {
 
@@ -264,15 +265,21 @@ function applyTypeRules(type, scoreMap, unavailableCount, totalPeople) {
   
   return scoreMap;
 }
-function calculateTop3(votes, meetingType) {
+function calculateTop3(votes, meeting) {
 
   const totalPeople = votes.length;
 
   const { scoreMap, unavailableCount } =
     buildScoreMap(votes);
 
-  const finalScores =
-    applyTypeRules(meetingType, scoreMap, unavailableCount, totalPeople);
+  const finalScores = applyTypeRules(
+    meeting.type, 
+    scoreMap, 
+    unavailableCount, 
+    totalPeople, 
+    votes, 
+    meeting
+  );
 
   const sorted = Object.entries(finalScores)
     .sort((a, b) => b[1] - a[1])
